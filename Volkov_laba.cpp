@@ -144,7 +144,8 @@ void menu() // menu
 		"5. Edit cs\n" <<
 		"6. Save \n" <<
 		"7. Load \n" <<
-		"8. Delete pipeline" << endl;
+		"8. Delete pipeline\n" << 
+		"9. Filter objects" << endl;
 };
 
 void sort_menu()
@@ -184,7 +185,6 @@ int main()
 	int choice;
 	string txt;
 	compressorstation c;
-	pipeline p;
 	unordered_map <int, pipeline> pipelines;
 	unordered_map <int, compressorstation> css;
 	int i = 1;
@@ -278,12 +278,25 @@ int main()
 
 		case 9:
 		{
-			cout << "Enter a name which you want to find" << endl;
+			/*cout << "Enter sign of repair" << endl;
+			for (const auto& [id, p] : pipelines) {
+				pipelines[id].search_piperepair(verificationbool());
+			}*/
+
+			// for search by sign of repair
+			// 
+			// kakogo to hrena esli v samom nachale nazhat 9 to vilezet glavnoe menu mne vpadlu razbiratsa uzhe 
+
+
+			/*cout << "Enter a name which you want to find" << endl;
 			getline(cin, txt);
 			for (const auto& [id, p] : pipelines)
 			{
-				pipelines[id].search_pipe(txt);
-			}
+				pipelines[id].search_pipename(txt);
+			}*/ 
+
+			// for search by name
+
 		}
 
 		default: // unexpected error

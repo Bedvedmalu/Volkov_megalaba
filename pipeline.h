@@ -16,7 +16,9 @@ public:
 
 	void show_p(const int& id);
 
-	void search_pipe(const string& name);
+	void search_pipename(const string& name);
+
+	void search_piperepair(const bool& rep);
 
 	void save_p(ofstream& fout);
 

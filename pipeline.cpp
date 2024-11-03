@@ -84,7 +84,7 @@ void pipeline::edit_pipe() // edit pipeline
 	}
 }
 
-void pipeline::search_pipe(const string& name)
+void pipeline::search_pipename(const string& name)
 {
 	if (name == pipename) {
 		cout << "------PIPELINE------" <<
@@ -94,6 +94,25 @@ void pipeline::search_pipe(const string& name)
 			"\nDiameter: " << pipediameter <<
 			"\nUnder repair? " << piperepair <<
 			"\n--------------------" << endl;
+	}
+	else {
+		cout << "Couldnt find pipe with that name" << endl;
+	}
+}
+
+void pipeline::search_piperepair(const bool& rep)
+{
+	if (rep == piperepair) {
+		cout << "------PIPELINE------" <<
+			"\nID:" << id <<
+			"\nName: " << pipename <<
+			"\nLength: " << pipelength <<
+			"\nDiameter: " << pipediameter <<
+			"\nUnder repair? " << piperepair <<
+			"\n--------------------" << endl;
+	}
+	else {
+		cout << "Couldnt find pipe with that sign" << endl;
 	}
 }
 
