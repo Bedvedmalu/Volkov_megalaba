@@ -22,7 +22,7 @@ public:
 
 	bool search_pipename(const int& id, const string& name);
 	
-	void search_piperepair(const int& id, const bool& inrep);
+	bool search_piperepair(const int& id, const bool& inrep);
 
 private:
 	static int MaxID;

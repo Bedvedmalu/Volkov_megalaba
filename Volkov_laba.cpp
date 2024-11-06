@@ -313,10 +313,16 @@ int main()
 
 				for (const auto& [id, p] : pipelines)
 				{
-					pipelines[id].search_piperepair(id, inrep);
+					if (pipelines[id].search_piperepair(id, inrep) == false) {
+						choice += 1;
+					}
 				}
 
-				cout << "Searching is finished" << endl;
+				if ((choice - 2) == (p.get_id() - 1)) {
+					cout << "Pipe with that attribute doesnt exist" << endl;
+				}
+
+				break;
 			}
 
 			default:

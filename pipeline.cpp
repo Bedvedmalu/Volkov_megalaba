@@ -137,7 +137,7 @@ bool pipeline::search_pipename(const int& id, const string& name)
 	}
 }
 
-void pipeline::search_piperepair(const int& id, const bool& inrep)
+bool pipeline::search_piperepair(const int& id, const bool& inrep)
 {
 	if (inrep == piperepair) {
 		cout << "------PIPELINE------" <<
@@ -147,5 +147,8 @@ void pipeline::search_piperepair(const int& id, const bool& inrep)
 			"\nDiameter: " << pipediameter <<
 			"\nUnder repair? " << piperepair <<
 			"\n--------------------" << endl;
+	}
+	else {
+		return false;
 	}
 }
