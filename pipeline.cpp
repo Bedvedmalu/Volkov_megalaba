@@ -7,9 +7,9 @@ using namespace std;
 
 int pipeline::MaxID = 1;
 
-void pipeline::id_p()
+int pipeline::get_id()
 {
-	id = MaxID++;
+	return id;
 }
 
 int pipeline::verification(int minvalue, int maxvalue) // verification of int data
@@ -67,8 +67,8 @@ void pipeline::add_pipe() // add pipeline
 	cout << "Under repair?\n0. No\n1. Yes\n";
 	piperepair = verificationbool();
 
-
-
+	id = MaxID;
+	MaxID++;
 }
 
 void pipeline::edit_pipe() // edit pipeline
@@ -83,39 +83,6 @@ void pipeline::edit_pipe() // edit pipeline
 		cout << "Create pipeline first" << endl;
 	}
 }
-
-void pipeline::search_pipename(const string& name)
-{
-	if (name == pipename) {
-		cout << "------PIPELINE------" <<
-			"\nID:" << id <<
-			"\nName: " << pipename <<
-			"\nLength: " << pipelength <<
-			"\nDiameter: " << pipediameter <<
-			"\nUnder repair? " << piperepair <<
-			"\n--------------------" << endl;
-	}
-	else {
-		cout << "Couldnt find pipe with that name" << endl;
-	}
-}
-
-void pipeline::search_piperepair(const bool& rep)
-{
-	if (rep == piperepair) {
-		cout << "------PIPELINE------" <<
-			"\nID:" << id <<
-			"\nName: " << pipename <<
-			"\nLength: " << pipelength <<
-			"\nDiameter: " << pipediameter <<
-			"\nUnder repair? " << piperepair <<
-			"\n--------------------" << endl;
-	}
-	else {
-		cout << "Couldnt find pipe with that sign" << endl;
-	}
-}
-
 
 void pipeline::show_p(const int& id)
 {
@@ -154,3 +121,31 @@ void pipeline::load_p(ifstream& fin) // load pipeline
 	}
 }
 
+bool pipeline::search_pipename(const int& id, const string& name)
+{
+	if (name == pipename) {
+		cout << "------PIPELINE------" <<
+			"\nID:" << id <<
+			"\nName: " << pipename <<
+			"\nLength: " << pipelength <<
+			"\nDiameter: " << pipediameter <<
+			"\nUnder repair? " << piperepair <<
+			"\n--------------------" << endl;
+	}
+	else {
+		return false;
+	}
+}
+
+void pipeline::search_piperepair(const int& id, const bool& inrep)
+{
+	if (inrep == piperepair) {
+		cout << "------PIPELINE------" <<
+			"\nID:" << id <<
+			"\nName: " << pipename <<
+			"\nLength: " << pipelength <<
+			"\nDiameter: " << pipediameter <<
+			"\nUnder repair? " << piperepair <<
+			"\n--------------------" << endl;
+	}
+}

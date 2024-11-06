@@ -3,6 +3,8 @@
 #include <fstream>
 #include <vector>
 #include <unordered_map>
+#include <chrono>
+#include <format>
 #include "pipeline.h"
 
 using namespace std;
@@ -144,8 +146,7 @@ void menu() // menu
 		"5. Edit cs\n" <<
 		"6. Save \n" <<
 		"7. Load \n" <<
-		"8. Delete pipeline\n" << 
-		"9. Filter objects" << endl;
+		"8. Delete pipeline" << endl;
 };
 
 void sort_menu()
@@ -179,7 +180,6 @@ void ID_verification(unordered_map<type_map, name_map>& objects, int choice, int
 	}
 }
 
-
 int main()
 {
 	int choice;
@@ -187,7 +187,7 @@ int main()
 	compressorstation c;
 	unordered_map <int, pipeline> pipelines;
 	unordered_map <int, compressorstation> css;
-	int i = 1;
+
 	while (true)
 	{
 		menu();
@@ -200,8 +200,9 @@ int main()
 		}
 		case 1: // add new pipeline
 		{
-			pipelines[i].add_pipe();
-			i++;
+			pipeline p;
+			p.add_pipe();
+			pipelines.emplace(p.get_id(), p);
 			break;
 		}
 		case 2: // add new cs
@@ -275,30 +276,56 @@ int main()
 			ID_verification(pipelines, choice, 1);
 			break;
 		}
-
 		case 9:
 		{
-			/*cout << "Enter sign of repair" << endl;
-			for (const auto& [id, p] : pipelines) {
-				pipelines[id].search_piperepair(verificationbool());
-			}*/
-
-			// for search by sign of repair
-			// 
-			// kakogo to hrena esli v samom nachale nazhat 9 to vilezet glavnoe menu mne vpadlu razbiratsa uzhe 
-
-
-			/*cout << "Enter a name which you want to find" << endl;
-			getline(cin, txt);
-			for (const auto& [id, p] : pipelines)
+			choice = verification(0, 4);
+			switch (choice)
 			{
-				pipelines[id].search_pipename(txt);
-			}*/ 
+			case 0:
+			{
+				break;
+			}
 
-			// for search by name
+			case 1:
+			{
+				cout << "Enter a name which you want to find" << endl;
+				getline(cin, txt);
+				pipeline p;
+
+				for (const auto& [id, p] : pipelines)
+				{
+					if (pipelines[id].search_pipename(id, txt) == false) {
+						choice += 1;
+					}
+				}
+				if ((choice - 1) == (p.get_id() - 1)) {
+					cout << "Pipe with that name doesnt exist";
+				}
+				break;
+			}
+
+			case 2:
+			{
+				cout << "Enter the attribute of pipe" << endl;
+				bool inrep;
+				cin >> inrep;
+				pipeline p;
+
+				for (const auto& [id, p] : pipelines)
+				{
+					pipelines[id].search_piperepair(id, inrep);
+				}
+
+				cout << "Searching is finished" << endl;
+			}
+
+			default:
+			{
+				break;
+			}
+			}
 
 		}
-
 		default: // unexpected error
 		{
 			break;
