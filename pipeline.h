@@ -2,37 +2,45 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-
-using namespace std;
+#include <unordered_set>
+#include <unordered_map>
+#include "utils.h"
 
 class pipeline {
 public:
 
 	void add_pipe();
 
-	void edit_pipe();
+	void edit();
 
 	void show_p(const int& id);
 
-	void save_p(ofstream& fout);
+	void save_p(std::ofstream& fout, std::unordered_map<int, pipeline>& pipellines);
 
-	void load_p(ifstream& fin);
+	void load_p(std::ifstream& fin, std::unordered_map<int,pipeline>& pipelines);
+
+	void search_pipename(std::unordered_set<int>& keys, const std::unordered_map<int, pipeline>& pipelines, const std::string& name);
 
 	int get_id();
 
-	bool search_pipename(const int& id, const string& name);
-	
-	bool search_piperepair(const int& id, const bool& inrep);
+	static int get_MaxID();
+
+	void search_piperepair(std::unordered_set<int>& keys, const std::unordered_map<int, pipeline>& pipelines, const bool& inrep);
+
+	void delete_searched(std::unordered_map<int, pipeline>& pipelines, const std::unordered_set<int>& keys);
+
+	void show_searched(std::unordered_map<int, pipeline>& pipelines,const std::unordered_set<int>& keys);
+
+	void edit_searched(std::unordered_map<int, pipeline>& pipelines, const std::unordered_set<int>& keys);
+
 
 private:
+
 	static int MaxID;
-	string pipename = "None";
+	int id;
+	std::string pipename = "None";
 	int pipelength = 0;
 	int pipediameter = 0;
 	bool piperepair = false;
-	int id;
-
-	int verification(int minvalue, int maxvalue);
-	bool verificationbool();
-
+	//pipeline(const string& name, int length, int diameter, bool repair) : pipename(name), pipelength(length), pipediameter(diameter), piperepair(repair) {}
 };

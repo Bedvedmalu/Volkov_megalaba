@@ -6,193 +6,35 @@
 #include <chrono>
 #include <format>
 #include "pipeline.h"
+#include "compressorstation.h"
+#include "utils.h"
 
 using namespace std;
-
-//int MaxID = 1;
-
-int verification(int minvalue, int maxvalue) // verification of int data
-{
-	int value;
-	while (true)
-	{
-		if ((cin >> value).good() && value >= minvalue && value <= maxvalue)
-		{
-			cin.clear();
-			cin.ignore(10000, '\n');
-			return value;
-		}
-		else
-		{
-			cout << "Incorrect data. Please, try again" << endl;
-			cin.clear();
-			cin.ignore(10000, '\n');
-		}
-	}
-}
-
-bool verificationbool() // verification of bool data
-{
-	bool value;
-	while (true)
-	{
-		if ((cin >> value).good())
-		{
-			cin.clear();
-			cin.ignore(10000, '\n');
-			return value;
-		}
-		else
-		{
-			cout << "Incorrect data. Please, try again" << endl;
-			cin.clear();
-			cin.ignore(10000, '\n');
-		}
-	}
-}
-
-
-class compressorstation {
-public:
-	void add_cs() // add compressors station
-	{
-		cout << "Choose a name for the cs\n";
-		//cin.ignore(10000, '\n');
-		getline(cin, csname);
-
-		cout << "Enter the number of workshops\n";
-		csshop = verification(0, 1000);
-
-		cout << "Enter the number of working workshops\n";
-		csworkshop = verification(0, csshop);
-
-		csefficiency = double(csworkshop) / csshop;
-	}
-
-	void edit_cs() // edit compressor station
-	{
-		if (csname != "")
-		{
-			cout << "Enter the number of working workshops\n";
-			csworkshop = verification(0, csshop);
-		}
-		else
-		{
-			cout << "Create cs first" << endl;
-		}
-		csefficiency = double(csworkshop) / csshop;
-	}
-
-	void show_c()
-	{
-		if (csname != "") // show compressors station
-		{
-			cout << "------CS------" <<
-				//"\nID: " << id <<
-				"\nName: " << csname <<
-				"\nNumber of workshops: " << csshop <<
-				"\nNumber of working shops: " << csworkshop <<
-				"\nEfficiency: " << csefficiency <<
-				"\n--------------------" << endl;
-		}
-		else
-		{
-			cout << "Create cs first" << endl;
-		}
-	}
-
-	void save_c(ofstream& fout) // save compressors station
-	{
-		string Marker = "CS";
-		if (csname == "None") fout << Marker << endl;
-		else
-		{
-			fout << csname << endl;
-			fout << csshop << endl;
-			fout << csworkshop << endl;
-			fout << csefficiency << endl;
-		}
-	}
-
-	void load_c(ifstream& fin) // load compressor station
-	{
-		string Marker;
-		getline(fin >> ws, Marker);
-		if (Marker != "CS")
-		{
-			csname = Marker;
-			fin >> csshop;
-			fin >> csworkshop;
-			fin >> csefficiency;
-		}
-	}
-
-private:
-	string csname = "None";
-	int csshop = 0;
-	int csworkshop = 0;
-	double csefficiency = 0.0;
-	//int id = MaxID++;
-};
-
-void menu() // menu
-{
-	cout <<
-		"0. Escape\n" <<
-		"1. Add new pipeline\n" <<
-		"2. Add new cs\n" <<
-		"3. Show all objects\n" <<
-		"4. Edit pipeline\n" <<
-		"5. Edit cs\n" <<
-		"6. Save \n" <<
-		"7. Load \n" <<
-		"8. Delete pipeline" << endl;
-};
-
-void sort_menu()
-{
-	cout <<
-		"0. Escape\n" <<
-		"1. Sort pipelines by name \n" <<
-		"2. Sort pipelines by repair \n" <<
-		"3. Sort CS by name \n" <<
-		"4. Sort CS by workshops \n" << endl;
-}
-
-template <typename type_map, typename name_map>
-void ID_verification(unordered_map<type_map, name_map>& objects, int choice, int todo)
-{
-	cout << "Input ID: " << endl;
-	choice = verification(1, 1000);
-	if (objects.find(choice) != objects.end()) {
-		switch (todo)
-		{
-		case 0:
-			objects[choice].edit_pipe();
-			break;
-		case 1:
-			objects.erase(choice);
-			break;
-		}
-	}
-	else {
-		cout << "ID doesn't exist" << endl;
-	}
-}
+using namespace chrono;
 
 int main()
 {
 	int choice;
+	bool rep;
 	string txt;
+	unordered_set<int> keys;
+
+	pipeline p;
 	compressorstation c;
+
 	unordered_map <int, pipeline> pipelines;
 	unordered_map <int, compressorstation> css;
+
+	redirect_output_wrapper cerr_out(cerr);
+	string time = std::format("{:%d_%m_%Y %H_%M_%OS}", system_clock::now());
+	ofstream logfile("log_" + time);
+	if (logfile)
+		cerr_out.redirect(logfile);
 
 	while (true)
 	{
 		menu();
-		choice = verification(0, 9);
-		switch (choice)
+		switch (GetCorrectNumber(0, 9))
 		{
 		case 0: // escape
 		{
@@ -200,7 +42,6 @@ int main()
 		}
 		case 1: // add new pipeline
 		{
-			pipeline p;
 			p.add_pipe();
 			pipelines.emplace(p.get_id(), p);
 			break;
@@ -208,7 +49,7 @@ int main()
 		case 2: // add new cs
 		{
 			c.add_cs();
-
+			css.emplace(c.get_id(), c);
 			break;
 		}
 		case 3: // show all objects
@@ -218,19 +59,21 @@ int main()
 				pipelines[id].show_p(id);
 			}
 
-			c.show_c();
+			for (const auto& [id, c] : css)
+			{
+				css[id].show_c(id);
+			}
 
 			break;
 		}
 		case 4: // edit pipe
 		{
-			ID_verification(pipelines, choice, 0);
+			ID_verification(pipelines, 0);
 			break;
 		}
 		case 5: // edit cs
 		{
-			c.edit_cs();
-
+			ID_verification(css, 0);
 			break;
 		}
 		case 6: // save 
@@ -241,8 +84,8 @@ int main()
 			ofstream fout(txt + ".txt");
 			if (fout.is_open())
 			{
-				//p.save_p(fout);
-				c.save_c(fout);
+				p.save_p(fout, pipelines);
+				c.save_c(fout,css);
 				fout.close();
 				cout << "Saved" << endl;
 			}
@@ -260,8 +103,13 @@ int main()
 			ifstream fin(txt + ".txt");
 			if (fin.is_open())
 			{
-				//p.load_p(fin);
-				c.load_c(fin);
+				c.load_c(fin, css);
+				
+				fin.clear();
+				fin.seekg(0, ios::beg);
+
+				p.load_p(fin, pipelines);
+				
 				fin.close();
 				cout << "Loaded" << endl;
 			}
@@ -271,16 +119,39 @@ int main()
 			}
 			break;
 		}
-		case 8: // delete pipe
+		case 8: // delete pipeline
 		{
-			ID_verification(pipelines, choice, 1);
+			cout
+				<< "Delete: \n"
+				<< "1. Pipeline \n"
+				<< "2. CS" << endl;
+			choice = verification(1, 2);
+			switch (choice)
+			{
+			case 1:
+			{
+				ID_verification(pipelines, 1);
+				break;
+			}
+			case 2:
+			{
+				ID_verification(css, 1);
+				break;
+			}
+			default:
+			{
+				break;
+			}
+			}
 			break;
 		}
 		case 9:
 		{
+			bool flag{};
+			sort_menu();
 			choice = verification(0, 4);
-			switch (choice)
-			{
+
+			switch (choice) {
 			case 0:
 			{
 				break;
@@ -288,54 +159,103 @@ int main()
 
 			case 1:
 			{
-				cout << "Enter a name which you want to find" << endl;
+				flag = true;
+				cout << "Enter pipeline name: " << endl;
 				getline(cin, txt);
-				pipeline p;
-
-				for (const auto& [id, p] : pipelines)
-				{
-					if (pipelines[id].search_pipename(id, txt) == false) {
-						choice += 1;
-					}
-				}
-				if ((choice - 1) == (p.get_id() - 1)) {
-					cout << "Pipe with that name doesnt exist";
-				}
+				p.search_pipename(keys, pipelines, txt);
+				cout << "Searched pipes: " << endl;
+				p.show_searched(pipelines, keys);
 				break;
 			}
 
 			case 2:
 			{
-				cout << "Enter the attribute of pipe" << endl;
-				bool inrep;
-				cin >> inrep;
-				pipeline p;
-
-				for (const auto& [id, p] : pipelines)
-				{
-					if (pipelines[id].search_piperepair(id, inrep) == false) {
-						choice += 1;
-					}
-				}
-
-				if ((choice - 2) == (p.get_id() - 1)) {
-					cout << "Pipe with that attribute doesnt exist" << endl;
-				}
-
+				flag = true;
+				cout << "Enter pipelline's sign of repair: " << endl;
+				cin >> rep;
+				p.search_piperepair(keys, pipelines, rep);
+				cout << "Searched pipes: " << endl;
+				p.show_searched(pipelines, keys);
 				break;
+
+			}
+
+			case 3:
+			{
+				flag = false;
+				cout << "Enter cs's name: " << endl;
+				getline(cin, txt);
+				c.search_csname(css, keys, txt);
+				cout << "Searched cs's: " << endl;
+				c.show_searched(css, keys);
+				break;
+			}
+
+			case 4:
+			{
+				flag = false;
+				cout << "Enter cs's workshops: " << endl;
+				choice = verification(0, 10000);
+				c.search_cspercent(css, keys, choice);
+				cout << "Searched cs's: " << endl;
+				c.show_searched(css, keys);
 			}
 
 			default:
 			{
 				break;
 			}
+
+			}
+			if (keys.size() == 0) {
+				cout << "Can't search any objects" << endl;
+				break;
+			}
+			cout << "Do you want choose some ID's?" << endl << "0 - No" << endl << "1 - Yes" << endl;
+			rep = verificationbool();
+
+			if (rep) {
+				cout << "Input the ID separated by spaces" << endl;
+				getline(cin, txt);
+				istringstream stream(txt);
+				while (stream >> choice) {
+					if (!keys.contains(choice)) {
+						cout << "That Id doesn't exist: " << choice << endl;
+					}
+				}
 			}
 
+			action();
+			switch (GetCorrectNumber(1, 3)) {
+			case 1:
+				if (flag == true) {
+					p.delete_searched(pipelines, keys);
+				}
+				else {
+					c.delete_searched(css, keys);
+				}
+				break;
+			case 2:
+				if (flag == true) {
+					p.edit_searched(pipelines, keys);
+				}
+				else {
+					c.edit_searched(css, keys);
+				}
+				break;
+			default:
+				break;
+			}
+			
+			
+			keys.clear();
 		}
-		default: // unexpected error
+
+		default:
 		{
 			break;
 		}
+
 		}
 	}
 }
