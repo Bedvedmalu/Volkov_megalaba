@@ -12,7 +12,7 @@ public:
 
 	void edit();
 
-	void show_c(const int& id);
+	void show_c(const std::unordered_map<int, compressorstation>& css);
 
 	void save_c(std::ofstream& fout, std::unordered_map<int,compressorstation>& css);
 

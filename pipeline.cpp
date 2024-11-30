@@ -24,7 +24,7 @@ void pipeline::add_pipe() // add pipeline
 	cout << "Choose a name for the pipeline\n";
 	cin.ignore(10000, '\n');
 	getline(cin, pipename);
-
+	std::cerr << pipename << std::endl;
 	cout << "Choose pipe length\n";
 	pipelength = verification(0, 2000);
 
@@ -51,15 +51,18 @@ void pipeline::edit() // edit pipeline
 	}
 }
 
-void pipeline::show_p(const int& id)
+void pipeline::show_p(const unordered_map<int, pipeline>& pipelines)
 {
-	cout << "------PIPELINE------" <<
-		"\nID:" << id <<
-		"\nName: " << pipename <<
-		"\nLength: " << pipelength <<
-		"\nDiameter: " << pipediameter <<
-		"\nUnder repair? " << piperepair <<
-		"\n--------------------" << endl;
+	for (const auto& [id, p] : pipelines) {
+		cout << "------PIPELINE------" <<
+			"\nID:" << id <<
+			"\nName: " << p.pipename <<
+			"\nLength: " << p.pipelength <<
+			"\nDiameter: " << p.pipediameter <<
+			"\nUnder repair? " << p.piperepair <<
+			"\n--------------------" << endl;
+	}
+	
 }
 
 void pipeline::save_p(ofstream& fout, unordered_map<int, pipeline>& pipelines) // save pipeline
@@ -70,6 +73,7 @@ void pipeline::save_p(ofstream& fout, unordered_map<int, pipeline>& pipelines) /
 		else
 		{
 			fout << Marker << endl;
+			fout << id << endl;
 			fout << pipelines[id].pipename << endl;
 			fout << pipelines[id].pipelength << endl;
 			fout << pipelines[id].pipediameter << endl;
@@ -80,18 +84,19 @@ void pipeline::save_p(ofstream& fout, unordered_map<int, pipeline>& pipelines) /
 
 void pipeline::load_p(ifstream& fin, unordered_map<int, pipeline>& pipelines) // load pipeline
 {
+	pipelines.clear();
 
 	string Marker;
 	while (true) {
 
-		getline(fin >> ws, Marker);
+		getline(fin, Marker);
 
 		if (fin.eof()) break;
 
 		if (Marker != "PIPELINE") continue;
 
 
-		if (!(fin >> pipelines[MaxID].pipename >> pipelines[MaxID].pipelength >> pipelines[MaxID].pipediameter >> pipelines[MaxID].piperepair)) break;
+		if (!(fin >> id >> pipelines[id].pipename >> pipelines[id].pipelength >> pipelines[id].pipediameter >> pipelines[id].piperepair)) break;
 
 		MaxID++;
 	}
@@ -133,7 +138,7 @@ void pipeline::edit_searched(std::unordered_map<int, pipeline>& pipelines, const
 void pipeline::show_searched(std::unordered_map<int, pipeline>& pipelines, const std::unordered_set<int>& keys) {
 	for (const int& key : keys) {
 		cout << 
-			"\nID: " << pipelines[key].id <<
+			"\nID: " << key <<
 			"\nName: " << pipelines[key].pipename <<
 			"\nLength: " << pipelines[key].pipelength <<
 			"\nDiameter " << pipelines[key].pipediameter <<

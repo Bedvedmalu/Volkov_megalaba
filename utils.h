@@ -33,6 +33,8 @@ bool verificationbool();
 
 void menu();
 
+void delete_menu();
+
 void sort_menu();
 
 void action();

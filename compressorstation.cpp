@@ -49,21 +49,16 @@ void compressorstation::edit() // edit compressor station
 	csefficiency = double(csworkshop) / csshop;
 }
 
-void compressorstation::show_c(const int& id)
+void compressorstation::show_c(const unordered_map<int,compressorstation>& css)
 {
-	if (csname != "") // show compressors station
-	{
+	for (const auto& [id, c] : css) {
 		cout << "------CS------" <<
 			"\nID: " << id <<
-			"\nName: " << csname <<
-			"\nNumber of workshops: " << csshop <<
-			"\nNumber of working shops: " << csworkshop <<
-			"\nEfficiency: " << csefficiency <<
+			"\nName: " << c.csname <<
+			"\nNumber of workshops: " << c.csshop <<
+			"\nNumber of working shops: " << c.csworkshop <<
+			"\nEfficiency: " << c.csefficiency <<
 			"\n--------------------" << endl;
-	}
-	else
-	{
-		cout << "Create cs first" << endl;
 	}
 }
 
@@ -75,6 +70,7 @@ void compressorstation::save_c(ofstream& fout, unordered_map<int, compressorstat
 		else
 		{
 			fout << Marker << endl;
+			fout << id << endl;
 			fout << css[id].csname << endl;
 			fout << css[id].csshop << endl;
 			fout << css[id].csworkshop << endl;
@@ -85,6 +81,8 @@ void compressorstation::save_c(ofstream& fout, unordered_map<int, compressorstat
 
 void compressorstation::load_c(ifstream& fin, unordered_map<int, compressorstation>& css) // load compressor station
 {
+	css.clear();
+
 	string Marker;
 	while (true) {
 
@@ -95,7 +93,7 @@ void compressorstation::load_c(ifstream& fin, unordered_map<int, compressorstati
 		if (Marker != "CS") continue;
 
 
-		fin >> css[MaxID].csname >> css[MaxID].csshop >> css[MaxID].csworkshop >> css[MaxID].csefficiency;
+		fin >> css[id].csname >> css[id].csshop >> css[id].csworkshop >> css[id].csefficiency;
 
 		MaxID++;
 	}
@@ -128,7 +126,7 @@ void compressorstation::edit_searched(std::unordered_map<int, compressorstation>
 		if (keys.find(id) != keys.end()) {
 			cin.clear();
 			cin.ignore(1000, '\n');
-			cin >> c.csefficiency;
+			cin >> css[id].csworkshop;
 		}
 	}
 }

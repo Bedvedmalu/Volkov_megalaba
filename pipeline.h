@@ -13,7 +13,7 @@ public:
 
 	void edit();
 
-	void show_p(const int& id);
+	void show_p(const std::unordered_map<int, pipeline>& pipelines);
 
 	void save_p(std::ofstream& fout, std::unordered_map<int, pipeline>& pipellines);
 
@@ -42,5 +42,5 @@ private:
 	int pipelength = 0;
 	int pipediameter = 0;
 	bool piperepair = false;
-	//pipeline(const string& name, int length, int diameter, bool repair) : pipename(name), pipelength(length), pipediameter(diameter), piperepair(repair) {}
+
 };
