@@ -14,7 +14,7 @@ public:
 
 	void show_c(const std::unordered_map<int, compressorstation>& css);
 
-	void save_c(std::ofstream& fout, std::unordered_map<int,compressorstation>& css);
+	void save_c(std::ofstream& fout, std::unordered_map<int, compressorstation>& css);
 
 	void load_c(std::ifstream& fin, std::unordered_map<int, compressorstation>& css);
 

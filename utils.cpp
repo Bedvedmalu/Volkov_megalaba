@@ -84,4 +84,3 @@ void action()
 		"1. Delete\n" <<
 		"2. Edit\n";
 }
-

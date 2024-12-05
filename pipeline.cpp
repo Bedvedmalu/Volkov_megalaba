@@ -30,7 +30,6 @@ void pipeline::add_pipe() // add pipeline
 
 	cout << "Choose pipe diameter\n";
 	pipediameter = verification(0, 1000);
-
 	cout << "Under repair?\n0. No\n1. Yes\n";
 	piperepair = verificationbool();
 
@@ -62,14 +61,14 @@ void pipeline::show_p(const unordered_map<int, pipeline>& pipelines)
 			"\nUnder repair? " << p.piperepair <<
 			"\n--------------------" << endl;
 	}
-	
+
 }
 
 void pipeline::save_p(ofstream& fout, unordered_map<int, pipeline>& pipelines) // save pipeline
 {
 	string Marker = "PIPELINE";
 	for (const auto& [id, p] : pipelines) {
-		if (pipename == "None") fout << Marker << endl;
+		if (pipename == "") fout << Marker << endl;
 		else
 		{
 			fout << Marker << endl;
@@ -105,7 +104,7 @@ void pipeline::load_p(ifstream& fin, unordered_map<int, pipeline>& pipelines) //
 
 void pipeline::search_pipename(std::unordered_set<int>& keys, const std::unordered_map<int, pipeline>& pipelines, const std::string& name) {
 	for (const auto& [id, p] : pipelines) {
-		if (name == p.pipename) {
+		if (p.pipename.find(name) != string::npos) {
 			keys.insert(id);
 		}
 	}
@@ -130,20 +129,19 @@ void pipeline::edit_searched(std::unordered_map<int, pipeline>& pipelines, const
 	for (const int& key : keys) {
 		if (pipelines.count(key) != 0) {
 			cout << "Now changing sign of repair for ID: " << key << endl;
-			cin >> pipelines[key].piperepair; 
+			cin >> pipelines[key].piperepair;
 		}
 	}
 }
 
 void pipeline::show_searched(std::unordered_map<int, pipeline>& pipelines, const std::unordered_set<int>& keys) {
 	for (const int& key : keys) {
-		cout << 
+		cout <<
 			"\nID: " << key <<
 			"\nName: " << pipelines[key].pipename <<
 			"\nLength: " << pipelines[key].pipelength <<
 			"\nDiameter " << pipelines[key].pipediameter <<
 			"\nUnder repair? " << pipelines[key].piperepair <<
-			 endl;
+			endl;
 	}
 }
-

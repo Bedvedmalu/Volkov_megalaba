@@ -5,19 +5,23 @@
 using namespace std;
 using namespace chrono;
 
-void option1(pipeline& p,unordered_map<int, pipeline>& pipelines) {
+void option1(unordered_map<int, pipeline>& pipelines) {
+	pipeline p;
 	p.add_pipe();
 	pipelines.emplace(p.get_id(), p);
 	return;
 }
 
-void option2(compressorstation& c, unordered_map<int, compressorstation>& css) {
+void option2(unordered_map<int, compressorstation>& css) {
+	compressorstation c;
 	c.add_cs();
 	css.emplace(c.get_id(), c);
 	return;
 }
 
-void option3(pipeline& p, compressorstation& c, unordered_map<int, pipeline>& pipelines, unordered_map<int, compressorstation>& css){
+void option3(unordered_map<int, pipeline>& pipelines, unordered_map<int, compressorstation>& css) {
+	pipeline p;
+	compressorstation c;
 	p.show_p(pipelines);
 	c.show_c(css);
 	return;
@@ -35,15 +39,17 @@ void option5(unordered_map<int, compressorstation>& css) {
 	return;
 }
 
-void option6(pipeline& p, compressorstation& c, unordered_map<int, pipeline>& pipelines, unordered_map<int, compressorstation>& css) {
+void option6(unordered_map<int, pipeline>& pipelines, unordered_map<int, compressorstation>& css) {
 	string txt;
+	pipeline p;
+	compressorstation c;
 	cout << "Enter file name" << endl;
-	cin >> txt;
+	INPUT_LINE(cin, txt);
 	ofstream fout(txt + ".txt");
 
 	if (fout.is_open()) {
-		p.save_p(fout, pipelines);
 		c.save_c(fout, css);
+		p.save_p(fout, pipelines);
 		fout.close();
 		cout << "Saved" << endl;
 	}
@@ -51,12 +57,14 @@ void option6(pipeline& p, compressorstation& c, unordered_map<int, pipeline>& pi
 	return;
 }
 
-void option7(pipeline& p, compressorstation& c, unordered_map<int, pipeline>& pipelines, unordered_map<int, compressorstation>& css) {
+void option7(unordered_map<int, pipeline>& pipelines, unordered_map<int, compressorstation>& css) {
 	string filename;
+	pipeline p;
+	compressorstation c;
 
 	cout << "Enter file name: ";
-	
-	cin >> filename;
+
+	INPUT_LINE(cin, filename);
 
 	ifstream fin(filename + ".txt");
 
@@ -107,7 +115,9 @@ void option8(unordered_map<int, pipeline>& pipelines, unordered_map<int, compres
 	return;
 }
 
-void option9(pipeline& p, compressorstation& c, unordered_map<int, pipeline>& pipelines, unordered_map<int, compressorstation>& css, unordered_set<int>& keys) {
+void option9(unordered_map<int, pipeline>& pipelines, unordered_map<int, compressorstation>& css, unordered_set<int>& keys) {
+	pipeline p;
+	compressorstation c;
 	cin.clear();
 	cin.ignore(1000, '\n');
 	if ((pipelines.size() == 0) && (css.size() == 0)) {
@@ -117,15 +127,15 @@ void option9(pipeline& p, compressorstation& c, unordered_map<int, pipeline>& pi
 	sort_menu();
 	string txt;
 	bool flag;
-	switch (GetCorrectNumber(1,4)) {
+
+	switch (GetCorrectNumber(1, 4)) {
 	case 1:
 	{
 		cin.clear();
 		cin.ignore(1000, '\n');
 		flag = true;
 		cout << "Enter pipeline name: " << endl;
-		getline(cin, txt);
-		cerr << txt << endl;
+		INPUT_LINE(cin, txt);
 		p.search_pipename(keys, pipelines, txt);
 		p.show_searched(pipelines, keys);
 
@@ -136,15 +146,14 @@ void option9(pipeline& p, compressorstation& c, unordered_map<int, pipeline>& pi
 		break;
 	}
 
-	case 2: 
+	case 2:
 	{
 		cin.clear();
 		cin.ignore(1000, '\n');
 		bool rep;
 		flag = true;
 		cout << "Enter pipeline's sign of repair: " << endl;
-		cin >> rep;
-		cerr << rep << endl;
+		rep = verificationbool();
 		p.search_piperepair(keys, pipelines, rep);
 		p.show_searched(pipelines, keys);
 
@@ -152,7 +161,7 @@ void option9(pipeline& p, compressorstation& c, unordered_map<int, pipeline>& pi
 			cout << "Pipelines doesn't exist" << endl;
 			break;
 		}
-		return;
+		break;
 	}
 
 	case 3:
@@ -161,15 +170,14 @@ void option9(pipeline& p, compressorstation& c, unordered_map<int, pipeline>& pi
 		cin.ignore(1000, '\n');
 		flag = false;
 		cout << "Enter cs's name: " << endl;
-		getline(cin, txt);
-		cerr << txt << endl;
+		INPUT_LINE(cin, txt);
 		c.search_csname(css, keys, txt);
 		c.show_searched(css, keys);
 		if (keys.size() == 0) {
 			cout << "CS's doesn't exist" << endl;
 			break;
 		}
-		return;
+		break;
 	}
 
 	case 4:
@@ -184,41 +192,65 @@ void option9(pipeline& p, compressorstation& c, unordered_map<int, pipeline>& pi
 			cout << "CS's doesn't exist" << endl;
 			break;
 		}
-		return;
+		break;
 	}
 	}
-	cout << "Choose come ID's?" << endl << "0 - No" << endl << "1 - Yes" << endl;
-	if (GetCorrectNumber(0, 1) == 1) {
+	unordered_set<int> new_keys;
+	cout << "Choose some ID's?" << endl << "0 - No" << endl << "1 - Yes" << endl;
+	switch (GetCorrectNumber(0, 1))
+	{
+	case 1:
+	{
 		cout << "Enter ID's separated by spaces" << endl;
 		cin.clear();
 		cin.ignore(1000, '\n');
-		getline(cin, txt);
-		cerr << txt << endl;
+		INPUT_LINE(cin, txt);
 		int number;
-
 		istringstream stream(txt);
-
 		while (stream >> number) {
 			if (!keys.contains(number)) {
 				cout << "ID doesnt exist: " << number << endl;
 			}
+			else {
+				new_keys.insert(number);
+			}
+		}
+		action();
+		switch (GetCorrectNumber(1, 2)) {
+		case 1:
+		{
+			if (flag) p.delete_searched(pipelines, new_keys);
+			else c.delete_searched(css, new_keys);
+			break;
+		}
+		case 2:
+		{
+			if (flag) p.edit_searched(pipelines, new_keys);
+			else c.edit_searched(css, new_keys);
+			break;
+		}
 		}
 	}
-
-	if (keys.size() == 0) return;
-	action();
-	switch (GetCorrectNumber(1, 3)) {
-	case 1:
+	//else {
+	case 0:
 	{
-		if (flag) p.delete_searched(pipelines, keys);
-		else c.delete_searched(css, keys);
-		break;
+		action();
+		switch (GetCorrectNumber(1, 2)) {
+		case 1:
+		{
+			if (flag) p.delete_searched(pipelines, keys);
+			else c.delete_searched(css, keys);
+			break;
+		}
+		case 2:
+		{
+			if (flag) p.edit_searched(pipelines, keys);
+			else c.edit_searched(css, keys);
+			break;
+		}
+		}
 	}
-	case 2:
-		if (flag) p.edit_searched(pipelines, keys);
-		else c.edit_searched(css, keys);
-		break;
-	}
+	new_keys.clear();
 	keys.clear();
-	return;
+	}
 }

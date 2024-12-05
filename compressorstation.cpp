@@ -22,7 +22,7 @@ void compressorstation::add_cs() // add compressors station
 	cin.ignore(10000, '\n');
 	cout << "Choose a name for the cs\n";
 	getline(cin, csname);
-
+	std::cerr << csname << std::endl;
 	cout << "Enter the number of workshops\n";
 	csshop = verification(0, 1000);
 
@@ -49,7 +49,7 @@ void compressorstation::edit() // edit compressor station
 	csefficiency = double(csworkshop) / csshop;
 }
 
-void compressorstation::show_c(const unordered_map<int,compressorstation>& css)
+void compressorstation::show_c(const unordered_map<int, compressorstation>& css)
 {
 	for (const auto& [id, c] : css) {
 		cout << "------CS------" <<
@@ -66,7 +66,7 @@ void compressorstation::save_c(ofstream& fout, unordered_map<int, compressorstat
 {
 	string Marker = "CS";
 	for (const auto& [id, c] : css) {
-		if (csname == "None") fout << Marker << endl;
+		if (csname == "") fout << Marker << endl;
 		else
 		{
 			fout << Marker << endl;
@@ -86,14 +86,13 @@ void compressorstation::load_c(ifstream& fin, unordered_map<int, compressorstati
 	string Marker;
 	while (true) {
 
-		getline(fin >> ws, Marker);
+		getline(fin, Marker);
 
 		if (fin.eof()) break;
 
 		if (Marker != "CS") continue;
 
-
-		fin >> css[id].csname >> css[id].csshop >> css[id].csworkshop >> css[id].csefficiency;
+		if (!(fin >> id >> css[id].csname >> css[id].csshop >> css[id].csworkshop >> css[id].csefficiency)) break;
 
 		MaxID++;
 	}
@@ -101,7 +100,7 @@ void compressorstation::load_c(ifstream& fin, unordered_map<int, compressorstati
 
 void compressorstation::search_csname(const std::unordered_map<int, compressorstation>& css, std::unordered_set<int>& keys, const std::string& name) {
 	for (const auto& [id, cs] : css) {
-		if (name == cs.csname) {
+		if (cs.csname.find(name) != string::npos) {
 			keys.insert(id);
 		}
 	}
@@ -109,7 +108,7 @@ void compressorstation::search_csname(const std::unordered_map<int, compressorst
 
 void compressorstation::search_cspercent(const std::unordered_map<int, compressorstation>& css, std::unordered_set<int>& keys, const int& percent) {
 	for (const auto& [id, cs] : css) {
-		if (percent == ((100*cs.csshop - 100*cs.csworkshop)/cs.csshop)) {
+		if (percent == ((100 * cs.csshop - 100 * cs.csworkshop) / cs.csshop)) {
 			keys.insert(id);
 		}
 	}
@@ -134,7 +133,7 @@ void compressorstation::edit_searched(std::unordered_map<int, compressorstation>
 void compressorstation::show_searched(std::unordered_map<int, compressorstation>& css, const std::unordered_set<int>& keys) {
 	for (const int& key : keys) {
 		cout << "--------CS--------" <<
-			"\nID: " << css[key].id <<
+			"\nID: " << key <<
 			"\nName: " << css[key].csname <<
 			"\nAll shops: " << css[key].csshop <<
 			"\nWorking shops: " << css[key].csworkshop <<

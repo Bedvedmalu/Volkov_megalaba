@@ -17,7 +17,7 @@ public:
 
 	void save_p(std::ofstream& fout, std::unordered_map<int, pipeline>& pipellines);
 
-	void load_p(std::ifstream& fin, std::unordered_map<int,pipeline>& pipelines);
+	void load_p(std::ifstream& fin, std::unordered_map<int, pipeline>& pipelines);
 
 	void search_pipename(std::unordered_set<int>& keys, const std::unordered_map<int, pipeline>& pipelines, const std::string& name);
 
@@ -29,7 +29,7 @@ public:
 
 	void delete_searched(std::unordered_map<int, pipeline>& pipelines, const std::unordered_set<int>& keys);
 
-	void show_searched(std::unordered_map<int, pipeline>& pipelines,const std::unordered_set<int>& keys);
+	void show_searched(std::unordered_map<int, pipeline>& pipelines, const std::unordered_set<int>& keys);
 
 	void edit_searched(std::unordered_map<int, pipeline>& pipelines, const std::unordered_set<int>& keys);
 
