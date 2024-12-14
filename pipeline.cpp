@@ -3,6 +3,7 @@
 #include <fstream>
 #include "pipeline.h"
 #include "utils.h"
+#include <vector>
 
 
 using namespace std;
@@ -59,6 +60,8 @@ void pipeline::show_p(const unordered_map<int, pipeline>& pipelines)
 			"\nLength: " << p.pipelength <<
 			"\nDiameter: " << p.pipediameter <<
 			"\nUnder repair? " << p.piperepair <<
+			"\nCS id in: " << p.CS_in <<
+			"\nCS id out: " << p.CS_out << 
 			"\n--------------------" << endl;
 	}
 
@@ -77,6 +80,8 @@ void pipeline::save_p(ofstream& fout, unordered_map<int, pipeline>& pipelines) /
 			fout << pipelines[id].pipelength << endl;
 			fout << pipelines[id].pipediameter << endl;
 			fout << pipelines[id].piperepair << endl;
+			fout << pipelines[id].CS_in << endl;
+			fout << pipelines[id].CS_out << endl;
 		}
 	}
 }
@@ -95,7 +100,7 @@ void pipeline::load_p(ifstream& fin, unordered_map<int, pipeline>& pipelines) //
 		if (Marker != "PIPELINE") continue;
 
 
-		if (!(fin >> id >> pipelines[id].pipename >> pipelines[id].pipelength >> pipelines[id].pipediameter >> pipelines[id].piperepair)) break;
+		if (!(fin >> id >> pipelines[id].pipename >> pipelines[id].pipelength >> pipelines[id].pipediameter >> pipelines[id].piperepair >> pipelines[id].CS_in >> pipelines[id].CS_out)) break;
 
 		MaxID++;
 	}
@@ -144,4 +149,63 @@ void pipeline::show_searched(std::unordered_map<int, pipeline>& pipelines, const
 			"\nUnder repair? " << pipelines[key].piperepair <<
 			endl;
 	}
+}
+
+void pipeline::make_edges(std::unordered_map<int, pipeline>& pipelines, std::unordered_map<int, compressorstation>& css) {
+	for (auto& [id, p] : pipelines) {
+		/*if ((p.pipediameter != 500) && (p.pipediameter != 700) && (p.pipediameter != 1000) && (p.pipediameter != 1400)) {
+			continue;
+		}*/
+		cout << "Enter id of pipeline out: ";
+		INPUT_INT(cin, p.CS_out);
+		cout << "\nEnter id of pipeline in: ";
+		INPUT_INT(cin, p.CS_in);
+	}
+}
+
+void pipeline::make_matrix(std::unordered_map<int, pipeline>& pipelines, const std::unordered_map<int, compressorstation>& css, unordered_map<int, unordered_set<int>>& to_sort) {
+	vector<vector<int>> matrix(pipelines.size(), vector<int>(pipelines.size(),0));
+	unordered_set<int> tops;
+	for (const auto& [id, p] : pipelines) {
+		matrix[p.CS_out-1][p.CS_in-1] = 1;
+	}
+	for (int i = 0; i < css.size(); i++) {
+		for (int j = 0; j < css.size(); j++) {
+			if (matrix[i][j] == 1) {
+				tops.insert(i+1);
+			}
+		}
+		to_sort[i] = tops;
+		tops.clear();
+	}
+	cout << "Graph created" << endl;
+}
+
+void pipeline::visualising_graph(const unordered_map<int, pipeline>& pipelines, const string& filename) {
+	ofstream file("graph.dot");
+	if (!file.is_open()) {
+		cerr << "Couldnt open file";
+		return;
+	}
+	cout << "Opened" << endl;
+	file << "digraph G {" << endl;
+	cout << "Writing OK" << endl;
+	if (pipelines.empty()) {
+		cerr << "Pipelines doesnt exist" << endl;
+		return;
+	}
+
+	for (const auto& [id, p] : pipelines) {
+		file << "    " << p.CS_out << " -> " << p.CS_in << ";" << endl;
+	}
+	cout << "Zapis OK" << endl;
+	file << "}" << endl;
+	file.flush();
+	file.close();
+
+	string command = "\"C:\\Program Files\\Graphviz\\bin\\dot\" -Tpng graph.dot -o graph.png";
+	int result = system(command.c_str());
+
+	if (result == 0) cout << "Saved in " << filename << ".png" << endl;
+	else cerr << "Couldnt save" << endl;
 }

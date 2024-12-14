@@ -5,6 +5,7 @@
 #include <unordered_set>
 #include <unordered_map>
 #include "utils.h"
+#include "compressorstation.h"
 
 class pipeline {
 public:
@@ -33,14 +34,21 @@ public:
 
 	void edit_searched(std::unordered_map<int, pipeline>& pipelines, const std::unordered_set<int>& keys);
 
+	void make_edges(std::unordered_map<int, pipeline>& pipelines, std::unordered_map<int, compressorstation>& css);
+
+	void make_matrix(std::unordered_map<int, pipeline>& pipelines, const std::unordered_map<int, compressorstation>& css, std::unordered_map<int, std::unordered_set<int>>& to_sort);
+
+	void visualising_graph(const std::unordered_map<int, pipeline>& pipelines, const std::string& filename);
+
 
 private:
-
+	int CS_in;
+	int CS_out;
 	static int MaxID;
 	int id;
+	int size;
 	std::string pipename = "None";
 	int pipelength = 0;
 	int pipediameter = 0;
 	bool piperepair = false;
-
 };

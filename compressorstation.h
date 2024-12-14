@@ -41,5 +41,6 @@ private:
 	int csshop = 0;
 	int csworkshop = 0;
 	double csefficiency = 0.0;
-
+	std::unordered_set<int> in;
+	std::unordered_set<int> out;
 };

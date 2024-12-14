@@ -26,7 +26,7 @@ int main()
 	while (true)
 	{
 		menu();
-		switch (GetCorrectNumber(0, 9))
+		switch (GetCorrectNumber(0, 10))
 		{
 		case 0: return 0;// escape
 
@@ -44,9 +44,11 @@ int main()
 
 		case 7: option7(pipelines, css); break;// load
 
-		case 8: option8(pipelines, css); break; // delete pipeline
+		/*case 8: option8(pipelines, css); break;*/ // delete pipeline
 
 		case 9: option9(pipelines, css, keys); break;
+
+		case 8: option10(pipelines, css); break;
 
 		default: break;
 		}

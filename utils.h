@@ -8,6 +8,8 @@
 
 #define PRINT_PARAM(out, x) out<< #x << "=" << x << std::endl
 
+#define INPUT_INT(in, num) in >> num;\
+						std::cerr << num << std::endl;
 class redirect_output_wrapper
 {
 	std::ostream& stream;
