@@ -259,8 +259,9 @@ void option10(unordered_map<int, pipeline>& pipelines, unordered_map<int, compre
 	compressorstation c;
 	pipeline p;
 	unordered_map<int, unordered_set<int>> to_sort;
-	/*p.make_edges(pipelines, css);*/
+	//p.make_edges(pipelines, css);
 	p.make_matrix(pipelines, css, to_sort);
+	
 	p.visualising_graph(pipelines, "graph");
 	for (int top : Kan_by_Volkov(to_sort)) {
 		cout << top << " ";

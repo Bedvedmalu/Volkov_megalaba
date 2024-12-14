@@ -169,10 +169,11 @@ void pipeline::make_matrix(std::unordered_map<int, pipeline>& pipelines, const s
 	for (const auto& [id, p] : pipelines) {
 		matrix[p.CS_out-1][p.CS_in-1] = 1;
 	}
+	
 	for (int i = 0; i < css.size(); i++) {
-		for (int j = 0; j < css.size(); j++) {
-			if (matrix[i][j] == 1) {
-				tops.insert(i+1);
+		for (auto& [id,p] : pipelines) {
+			if (p.CS_out - 1 == i) {
+				tops.insert(p.CS_in - 1);
 			}
 		}
 		to_sort[i] = tops;
@@ -187,9 +188,9 @@ void pipeline::visualising_graph(const unordered_map<int, pipeline>& pipelines, 
 		cerr << "Couldnt open file";
 		return;
 	}
-	cout << "Opened" << endl;
+	
 	file << "digraph G {" << endl;
-	cout << "Writing OK" << endl;
+	
 	if (pipelines.empty()) {
 		cerr << "Pipelines doesnt exist" << endl;
 		return;
@@ -198,7 +199,7 @@ void pipeline::visualising_graph(const unordered_map<int, pipeline>& pipelines, 
 	for (const auto& [id, p] : pipelines) {
 		file << "    " << p.CS_out << " -> " << p.CS_in << ";" << endl;
 	}
-	cout << "Zapis OK" << endl;
+	
 	file << "}" << endl;
 	file.flush();
 	file.close();
